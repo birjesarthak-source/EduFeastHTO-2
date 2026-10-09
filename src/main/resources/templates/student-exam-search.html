@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{fragments/header :: head('Find My Exam Room')}"></head>
+
+<body>
+
+<div th:replace="~{fragments/header :: nav}"></div>
+
+<main class="content">
+
+    <!-- PAGE HEADER -->
+    <div class="topbar">
+
+        <div>
+
+            <h1>Find My Exam Room</h1>
+
+            <p class="muted">
+                Search using your USN / registration number or Faculty ID.
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <!-- ERROR -->
+    <div class="alert alert-danger"
+         th:if="${error}"
+         th:text="${error}">
+    </div>
+
+
+    <!-- SEARCH OPTIONS -->
+    <div class="panel mb-4">
+
+        <div class="panel-head">
+
+            <h5>Student Search</h5>
+
+        </div>
+
+        <form method="post"
+              action="/student-exam-search"
+              class="p-3">
+
+            <div class="input-group">
+
+                <input type="text"
+                       name="usn"
+                       class="form-control"
+                       placeholder="Enter USN e.g. 1EF23CS001"
+                       required>
+
+                <button class="btn btn-primary"
+                        type="submit">
+
+                    <i class="bi bi-search"></i>
+                    Search
+
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+
+    <!-- FACULTY SEARCH -->
+    <div class="panel mb-4">
+
+        <div class="panel-head">
+
+            <h5>Faculty Search</h5>
+
+        </div>
+
+        <form method="post"
+              action="/faculty-exam-search"
+              class="p-3">
+
+            <div class="input-group">
+
+                <input type="text"
+                       name="facultyId"
+                       class="form-control"
+                       placeholder="Enter Faculty ID e.g. FAC001"
+                       required>
+
+                <button class="btn btn-primary"
+                        type="submit">
+
+                    <i class="bi bi-person-badge"></i>
+                    Search Faculty
+
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+
+    <!-- ===================================================== -->
+    <!-- STUDENT RESULT -->
+    <!-- ===================================================== -->
+
+    <div class="panel"
+         th:if="${searchType == 'student' && student != null}">
+
+        <div class="panel-head">
+
+            <h5>
+                Student Exam Details
+            </h5>
+
+        </div>
+
+        <div class="table-responsive">
+
+            <table class="table align-middle">
+
+                <thead>
+
+                <tr>
+
+                    <th>USN</th>
+                    <th>Student</th>
+                    <th>Exam</th>
+                    <th>Subject</th>
+                    <th>Date</th>
+                    <th>Time</th>
+                    <th>Room</th>
+                    <th>Seat</th>
+
+                </tr>
+
+                </thead>
+
+                <tbody>
+
+                <tr th:each="a : ${studentAllocations}">
+
+                    <td th:text="${a.student.usn}">
+                    </td>
+
+                    <td th:text="${a.student.name}">
+                    </td>
+
+                    <td th:text="${a.exam.examName}">
+                    </td>
+
+                    <td th:text="${a.exam.subjectCode}">
+                    </td>
+
+                    <td th:text="${a.exam.examDate}">
+                    </td>
+
+                    <td th:text="${a.exam.startTime + ' - ' + a.exam.endTime}">
+                    </td>
+
+                    <td th:text="${a.room.roomNumber}">
+                    </td>
+
+                    <td>
+
+                        <span class="seat"
+                              th:text="${a.seatNumber}">
+                        </span>
+
+                    </td>
+
+                </tr>
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+
+    <!-- ===================================================== -->
+    <!-- FACULTY RESULT -->
+    <!-- ===================================================== -->
+
+    <div class="panel"
+         th:if="${searchType == 'faculty' && faculty != null}">
+
+        <div class="panel-head">
+
+            <h5>
+                Faculty Allocation
+            </h5>
+
+        </div>
+
+
+        <!-- FACULTY INFORMATION -->
+
+        <div class="p-3">
+
+            <strong>Faculty ID:</strong>
+            <span th:text="${faculty.facultyId}"></span>
+
+            &nbsp;&nbsp;&nbsp;
+
+            <strong>Name:</strong>
+            <span th:text="${faculty.facultyName}"></span>
+
+        </div>
+
+
+        <div class="table-responsive">
+
+            <table class="table align-middle">
+
+                <thead>
+
+                <tr>
+
+                    <th>Faculty ID</th>
+                    <th>Faculty Name</th>
+                    <th>Exam</th>
+                    <th>Subject</th>
+                    <th>Date</th>
+                    <th>Time</th>
+                    <th>Department</th>
+                    <th>Semester</th>
+                    <th>Room</th>
+                    <th>Students</th>
+
+                </tr>
+
+                </thead>
+
+
+                <tbody>
+
+                <tr th:each="a : ${facultyAllocations}">
+
+                    <!-- FACULTY ID -->
+                    <td th:text="${a.faculty.facultyId}">
+                    </td>
+
+
+                    <!-- FACULTY NAME -->
+                    <td th:text="${a.faculty.facultyName}">
+                    </td>
+
+
+                    <!-- EXAM -->
+                    <td th:text="${a.exam.examName}">
+                    </td>
+
+
+                    <!-- SUBJECT -->
+                    <td th:text="${a.exam.subjectCode}">
+                    </td>
+
+
+                    <!-- DATE -->
+                    <td th:text="${a.exam.examDate}">
+                    </td>
+
+
+                    <!-- TIME -->
+                    <td th:text="${a.exam.startTime + ' - ' + a.exam.endTime}">
+                    </td>
+
+
+                    <!-- DEPARTMENT -->
+                    <td th:text="${a.exam.department.departmentCode}">
+                    </td>
+
+
+                    <!-- SEMESTER -->
+                    <td th:text="${a.exam.semester}">
+                    </td>
+
+
+                    <!-- ROOM -->
+                    <td th:text="${a.room.roomNumber}">
+                    </td>
+
+
+                    <!-- NUMBER OF STUDENTS -->
+                    <td th:text="${a.allocatedStudents}">
+                    </td>
+
+                </tr>
+
+
+                <!-- NO ALLOCATION -->
+                <tr th:if="${#lists.isEmpty(facultyAllocations)}">
+
+                    <td colspan="10"
+                        class="text-center">
+
+                        No exam room has been allocated to this faculty member.
+
+                    </td>
+
+                </tr>
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</main>
+
+</body>
+
+</html>

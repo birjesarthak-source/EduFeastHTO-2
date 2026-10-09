@@ -1,0 +1,62 @@
+
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Dashboard | EduFest</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f3f5fa;
+            color: #263248;
+        }
+        header {
+            background: #176b61;
+            color: white;
+            padding: 22px 35px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        main { padding: 35px; }
+        .card {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 3px 12px #00000010;
+            max-width: 650px;
+        }
+        a {
+            display: inline-block;
+            margin-top: 10px;
+            padding: 12px 18px;
+            background: #168578;
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+        }
+        .logout { background: #c0392b; }
+        p { line-height: 1.7; }
+    </style>
+</head>
+<body>
+<header>
+    <h2>EduFest — Student Portal</h2>
+    <form th:action="@{/logout}" method="post">
+        <button class="logout" type="submit">Logout</button>
+    </form>
+</header>
+
+<main>
+    <div class="card">
+        <h2>Welcome, Student</h2>
+        <p>Check your examination date, time, allocated classroom and seat number.</p>
+        <p><strong>Access:</strong> Read-only. You cannot modify examination allocations.</p>
+
+        <a th:href="@{/student/exam-search}">Find My Exam Details</a>
+    </div>
+</main>
+</body>
+</html>

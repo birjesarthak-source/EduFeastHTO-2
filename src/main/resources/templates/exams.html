@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{fragments/header :: head('Exams')}"></head>
+
+<body>
+
+<div th:replace="~{fragments/header :: nav}"></div>
+
+<main class="content">
+
+    <!-- PAGE HEADER -->
+    <div class="topbar">
+        <div>
+            <h1>Exam Management</h1>
+            <p class="muted">
+                Create exams and generate intelligent seating plans.
+            </p>
+        </div>
+    </div>
+
+
+    <!-- CREATE EXAM -->
+    <div class="panel mb-4">
+
+        <div class="panel-head">
+            <h5>Create Exam</h5>
+        </div>
+
+        <form method="post"
+              action="/exams"
+              class="row g-3 p-3">
+
+            <div class="col-md-3">
+                <label>Exam Name</label>
+                <input name="examName"
+                       class="form-control"
+                       required>
+            </div>
+
+            <div class="col-md-2">
+                <label>Subject Code</label>
+                <input name="subjectCode"
+                       class="form-control"
+                       required>
+            </div>
+
+            <div class="col-md-2">
+                <label>Date</label>
+                <input name="examDate"
+                       type="date"
+                       class="form-control"
+                       required>
+            </div>
+
+            <div class="col-md-2">
+                <label>Start</label>
+                <input name="startTime"
+                       type="time"
+                       class="form-control"
+                       required>
+            </div>
+
+            <div class="col-md-2">
+                <label>End</label>
+                <input name="endTime"
+                       type="time"
+                       class="form-control"
+                       required>
+            </div>
+
+            <div class="col-md-1">
+                <label>Sem</label>
+                <input name="semester"
+                       type="number"
+                       class="form-control"
+                       required>
+            </div>
+
+            <div class="col-md-4">
+                <label>Department</label>
+
+                <select name="department"
+                        class="form-select"
+                        required>
+
+                    <option th:each="d : ${departments}"
+                            th:value="${d.id}"
+                            th:text="${d.departmentCode + ' - ' + d.departmentName}">
+                    </option>
+
+                </select>
+            </div>
+
+            <div class="col-12">
+
+                <button class="btn btn-primary"
+                        type="submit">
+
+                    Create Exam
+
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+
+    <!-- EXAM LIST -->
+    <div class="panel">
+
+        <div class="table-responsive">
+
+            <table class="table align-middle">
+
+                <thead>
+                <tr>
+
+                    <th>Exam</th>
+                    <th>Subject</th>
+                    <th>Date</th>
+                    <th>Time</th>
+                    <th>Sem</th>
+                    <th>Action</th>
+
+                </tr>
+                </thead>
+
+
+                <tbody>
+
+                <tr th:each="e : ${exams}">
+
+                    <!-- EXAM -->
+                    <td th:text="${e.examName}">
+                    </td>
+
+
+                    <!-- SUBJECT -->
+                    <td th:text="${e.subjectCode}">
+                    </td>
+
+
+                    <!-- DATE -->
+                    <td th:text="${e.examDate}">
+                    </td>
+
+
+                    <!-- TIME -->
+                    <td th:text="${e.startTime + ' - ' + e.endTime}">
+                    </td>
+
+
+                    <!-- SEMESTER -->
+                    <td th:text="${e.semester}">
+                    </td>
+
+
+                    <!-- ACTION -->
+                    <td>
+
+                        <div style="
+                            display: flex;
+                            gap: 8px;
+                            align-items: center;
+                            flex-wrap: wrap;
+                        ">
+
+                            <!-- GENERATE SEATING -->
+                            <form method="post"
+                                  th:action="@{'/exams/' + ${e.id} + '/allocate'}"
+                                  style="margin: 0;">
+
+                                <button class="btn btn-sm btn-primary"
+                                        type="submit">
+
+                                    <i class="bi bi-magic"></i>
+                                    Generate Seating
+
+                                </button>
+
+                            </form>
+
+
+                            <!-- VIEW SEATING -->
+                            <a th:href="@{'/exams/' + ${e.id} + '/allocation'}"
+                               class="btn btn-sm btn-outline-primary">
+
+                                <i class="bi bi-eye"></i>
+                                View
+
+                            </a>
+
+                        </div>
+
+                    </td>
+
+                </tr>
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</main>
+
+</body>
+
+</html>

@@ -1,0 +1,11 @@
+<!DOCTYPE html><html xmlns:th="http://www.thymeleaf.org"><head th:replace="~{fragments/header :: head('Dashboard')}"></head>
+<body><div th:replace="~{fragments/header :: nav}"></div><main class="content">
+<div class="topbar"><div><h1>Dashboard</h1><p class="muted">College rooms, events and examination allocation</p></div><a class="btn btn-primary" href="/events"><i class="bi bi-plus-lg"></i> New Event</a></div>
+<div class="stats">
+<div class="stat"><span>Classrooms</span><b th:text="${classroomCount}">0</b><i class="bi bi-door-open"></i></div>
+<div class="stat"><span>Students</span><b th:text="${studentCount}">0</b><i class="bi bi-people"></i></div>
+<div class="stat"><span>Events</span><b th:text="${eventCount}">0</b><i class="bi bi-calendar-event"></i></div>
+<div class="stat"><span>Exams</span><b th:text="${examCount}">0</b><i class="bi bi-journal-check"></i></div></div>
+<div class="row g-4 mt-1"><div class="col-lg-6"><div class="panel"><div class="panel-head"><h5>Upcoming Events</h5><a href="/events">View all</a></div><div th:each="e:${events}" class="list-row"><div><b th:text="${e.eventName}"></b><small th:text="${e.eventDate+' • '+e.startTime}"></small></div><span class="badge-soft" th:text="${e.status}"></span></div><div th:if="${#lists.isEmpty(events)}" class="empty">No events yet.</div></div></div>
+<div class="col-lg-6"><div class="panel"><div class="panel-head"><h5>Upcoming Exams</h5><a href="/exams">View all</a></div><div th:each="e:${exams}" class="list-row"><div><b th:text="${e.examName}"></b><small th:text="${e.examDate+' • '+e.startTime}"></small></div><span class="badge-soft" th:text="${e.subjectCode}"></span></div><div th:if="${#lists.isEmpty(exams)}" class="empty">No exams yet.</div></div></div></div>
+</main></body></html>

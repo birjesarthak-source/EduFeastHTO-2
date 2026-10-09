@@ -1,0 +1,416 @@
+
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Events Management - EduFest</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+          rel="stylesheet">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css"
+          rel="stylesheet">
+
+    <style>
+        body {
+            margin: 0;
+            background: #f4f6fb;
+            color: #172b4d;
+            font-family: Arial, sans-serif;
+        }
+
+        .page-container {
+            max-width: 1600px;
+            margin: 35px auto;
+            padding: 0 25px;
+        }
+
+        .page-heading {
+            font-weight: 700;
+            color: #172b4d;
+        }
+
+        .panel {
+            background: #fff;
+            border-radius: 18px;
+            padding: 28px;
+            margin-bottom: 25px;
+            box-shadow: 0 5px 24px rgba(30, 45, 75, 0.07);
+        }
+
+        .table {
+            margin-bottom: 0;
+            vertical-align: middle;
+        }
+
+        .table thead th {
+            background: #f7f9fc;
+            color: #40536e;
+            font-size: 14px;
+            padding: 17px;
+            white-space: nowrap;
+        }
+
+        .table tbody td {
+            padding: 17px;
+            border-color: #e5e9f0;
+        }
+
+        .event-name {
+            font-weight: 700;
+            color: #172b4d;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 8px 13px;
+            border-radius: 30px;
+            font-size: 12px;
+            font-weight: 700;
+            white-space: nowrap;
+        }
+
+        .status-allocated {
+            color: #087443;
+            background: #d9fbe8;
+        }
+
+        .status-planned {
+            color: #895b00;
+            background: #fff0c2;
+        }
+
+        .status-other {
+            color: #46566c;
+            background: #e9edf3;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 7px;
+            align-items: center;
+            white-space: nowrap;
+        }
+
+        .action-buttons .btn {
+            border-radius: 7px;
+        }
+
+        .form-label {
+            font-weight: 600;
+            color: #40536e;
+        }
+
+        .form-control,
+        .form-select {
+            padding: 11px;
+            border-radius: 8px;
+        }
+
+        .section-title {
+            font-size: 23px;
+            font-weight: 700;
+            margin-bottom: 24px;
+        }
+
+        @media (max-width: 768px) {
+            .page-container {
+                margin: 18px auto;
+                padding: 0 12px;
+            }
+
+            .panel {
+                padding: 17px;
+            }
+
+            .header-actions {
+                width: 100%;
+            }
+
+            .header-actions .btn {
+                flex: 1;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="page-container">
+
+    <!-- PAGE HEADER -->
+    <div class="d-flex justify-content-between align-items-center
+                flex-wrap gap-3 mb-4">
+
+        <div>
+            <h1 class="page-heading mb-1">Events Management</h1>
+            <p class="text-secondary mb-0">
+                Manage college events and classroom allocations
+            </p>
+        </div>
+
+        <div class="d-flex gap-2 flex-wrap header-actions">
+
+            <form th:action="@{/events/allocate-all}" method="post">
+                <button type="submit" class="btn btn-primary">
+                    <i class="bi bi-calendar-check"></i>
+                    Auto Allocate All
+                </button>
+            </form>
+
+            <a href="#createEvent" class="btn btn-outline-primary">
+                <i class="bi bi-plus-circle"></i>
+                Add Event
+            </a>
+
+        </div>
+    </div>
+
+    <!-- SUCCESS / ERROR MESSAGES -->
+    <div th:if="${success}" class="alert alert-success alert-dismissible fade show">
+        <span th:text="${success}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+
+    <div th:if="${error}" class="alert alert-danger alert-dismissible fade show">
+        <span th:text="${error}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+
+    <!-- AUTO ALLOCATION RESULTS -->
+    <div th:if="${allocationResults != null}" class="panel">
+        <h3 class="section-title">Allocation Results</h3>
+
+        <p>
+            <span class="badge text-bg-success"
+                  th:text="'Successful: ' + ${successCount}"></span>
+
+            <span class="badge text-bg-danger"
+                  th:text="'Failed: ' + ${failureCount}"></span>
+        </p>
+
+        <ul class="mb-0">
+            <li th:each="result : ${allocationResults}"
+                th:text="${result}"
+                class="mb-2"></li>
+        </ul>
+    </div>
+
+    <!-- ALL EVENTS TABLE -->
+    <div class="panel">
+
+        <h2 class="section-title">All Events</h2>
+
+        <div class="table-responsive">
+
+            <table class="table table-hover">
+
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Event</th>
+                    <th>Date</th>
+                    <th>Time</th>
+                    <th>Participants</th>
+                    <th>Type</th>
+                    <th>Room Type</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                </tr>
+                </thead>
+
+                <tbody>
+
+                <tr th:each="e : ${events}">
+
+                    <td th:text="${e.id}"></td>
+
+                    <td>
+                        <span class="event-name"
+                              th:text="${e.eventName}"></span>
+                    </td>
+
+                    <td th:text="${e.eventDate}"></td>
+
+                    <td>
+                        <span th:text="${e.startTime}"></span>
+                        -
+                        <span th:text="${e.endTime}"></span>
+                    </td>
+
+                    <td th:text="${e.expectedParticipants}"></td>
+
+                    <td th:text="${e.eventType}"></td>
+
+                    <td th:text="${e.requiredRoomType}"></td>
+
+                    <td>
+                        <span th:if="${e.status != null and e.status.equalsIgnoreCase('ALLOCATED')}"
+                              class="status-badge status-allocated">
+                            ALLOCATED
+                        </span>
+
+                        <span th:if="${e.status == null or e.status.equalsIgnoreCase('PLANNED')}"
+                              class="status-badge status-planned">
+                            PLANNED
+                        </span>
+
+                        <span th:if="${e.status != null and !e.status.equalsIgnoreCase('ALLOCATED') and !e.status.equalsIgnoreCase('PLANNED')}"
+                              class="status-badge status-other"
+                              th:text="${e.status}">
+                        </span>
+                    </td>
+
+                    <!-- ACTION BUTTONS -->
+                    <td>
+                        <div class="action-buttons">
+
+                            <!-- View allocated classrooms -->
+                            <a th:href="@{/events/{id}/view(id=${e.id})}"
+                               class="btn btn-sm btn-outline-primary"
+                               title="View room allocation">
+                                <i class="bi bi-eye"></i>
+                                View
+                            </a>
+
+                            <!-- Allocate one event -->
+                            <form th:action="@{/events/{id}/allocate(id=${e.id})}"
+                                  method="post"
+                                  class="m-0">
+
+                                <button type="submit"
+                                        class="btn btn-sm btn-success"
+                                        title="Allocate rooms">
+                                    <i class="bi bi-building-check"></i>
+                                    Allocate
+                                </button>
+
+                            </form>
+
+                        </div>
+                    </td>
+
+                </tr>
+
+                <tr th:if="${#lists.isEmpty(events)}">
+                    <td colspan="9" class="text-center text-secondary py-5">
+                        <i class="bi bi-calendar-x fs-2 d-block mb-2"></i>
+                        No events found. Add your first event below.
+                    </td>
+                </tr>
+
+                </tbody>
+            </table>
+
+        </div>
+    </div>
+
+    <!-- CREATE EVENT FORM -->
+    <div class="panel" id="createEvent">
+
+        <h2 class="section-title">
+            <i class="bi bi-plus-circle text-primary"></i>
+            Create New Event
+        </h2>
+
+        <form th:action="@{/events}" th:object="${event}" method="post">
+
+            <div class="row g-3">
+
+                <div class="col-md-6">
+                    <label class="form-label">Event Name</label>
+                    <input type="text"
+                           th:field="*{eventName}"
+                           class="form-control"
+                           placeholder="Enter event name"
+                           required>
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label">Event Type</label>
+                    <input type="text"
+                           th:field="*{eventType}"
+                           class="form-control"
+                           placeholder="e.g. Technical, Workshop, Seminar"
+                           required>
+                </div>
+
+                <div class="col-md-4">
+                    <label class="form-label">Event Date</label>
+                    <input type="date"
+                           th:field="*{eventDate}"
+                           class="form-control"
+                           required>
+                </div>
+
+                <div class="col-md-4">
+                    <label class="form-label">Start Time</label>
+                    <input type="time"
+                           th:field="*{startTime}"
+                           class="form-control"
+                           required>
+                </div>
+
+                <div class="col-md-4">
+                    <label class="form-label">End Time</label>
+                    <input type="time"
+                           th:field="*{endTime}"
+                           class="form-control"
+                           required>
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label">Expected Participants</label>
+                    <input type="number"
+                           th:field="*{expectedParticipants}"
+                           class="form-control"
+                           min="1"
+                           placeholder="Enter participant count"
+                           required>
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label">Required Room Type</label>
+                    <select th:field="*{requiredRoomType}"
+                            class="form-select"
+                            required>
+                        <option value="">Select room type</option>
+                        <option value="CLASSROOM">CLASSROOM</option>
+                        <option value="LAB">LAB</option>
+                        <option value="AUDITORIUM">AUDITORIUM</option>
+                    </select>
+                </div>
+
+            </div>
+
+            <div class="d-flex gap-2 mt-4 flex-wrap">
+
+                <button type="submit" class="btn btn-primary px-4">
+                    <i class="bi bi-save"></i>
+                    Save Event
+                </button>
+
+                <button type="reset" class="btn btn-outline-secondary px-4">
+                    Clear
+                </button>
+
+            </div>
+
+            <p class="text-secondary small mt-3 mb-0">
+                Newly created events are saved as PLANNED.
+                Allocate rooms after saving.
+            </p>
+
+        </form>
+
+    </div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>

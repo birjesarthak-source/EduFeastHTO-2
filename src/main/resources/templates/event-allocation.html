@@ -1,0 +1,5 @@
+<!DOCTYPE html><html xmlns:th="http://www.thymeleaf.org"><head th:replace="~{fragments/header :: head('Event Allocation')}"></head><body><div th:replace="~{fragments/header :: nav}"></div><main class="content">
+<div class="topbar"><div><h1>Event Room Allocation</h1><p class="muted" th:text="${event.eventName}"></p></div><a href="/events" class="btn btn-outline-secondary">Back</a></div>
+<div class="alert alert-success" th:if="${success}" th:text="${success}"></div><div class="alert alert-danger" th:if="${error}" th:text="${error}"></div>
+<div class="panel" th:if="${allocations}"><div class="panel-head"><h5>Selected Rooms</h5></div><div class="p-3"><div class="allocation-card" th:each="a:${allocations}"><div><b th:text="${a.room.roomNumber}"></b><span th:text="${a.room.building}"></span></div><strong th:text="${a.allocatedCapacity+' participants'}"></strong></div></div></div>
+</main></body></html>
