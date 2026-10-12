@@ -23,7 +23,12 @@ mvn clean spring-boot:run
 ```
 
 Open:
-http://localhost:8081
+http://localhost:10000
+
+The application uses port `10000` by default (`server.port=${PORT:10000}`).
+If you set the `PORT` environment variable, open that port instead. After
+changing templates or styles, restart the running Spring Boot application and
+hard-refresh the browser (`Ctrl+F5`) to load the updated page and stylesheet.
 
 Demo login:
 - Email: admin@edufest.local
